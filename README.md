@@ -39,10 +39,11 @@
 
 ## 🚀 Getting Started
 
+The **pre-trained model** (`backend/model.pkl`) is already included in this repository — no dataset download needed to run the dashboard!
+
 ### Prerequisites
 - Node.js 18+
 - Python 3.10+
-- MIMIC-III 10k dataset from [Kaggle](https://www.kaggle.com/datasets/bilal1907/mimic-iii-10k)
 
 ### 1. Clone the repository
 ```bash
@@ -50,33 +51,38 @@ git clone https://github.com/Swapnamoy3/final-year-Poject-.git
 cd final-year-Poject-
 ```
 
-### 2. Download the MIMIC-III dataset
-```bash
-mkdir -p data
-curl -L -o data/mimic-iii-10k.zip \
-  https://www.kaggle.com/api/v1/datasets/download/bilal1907/mimic-iii-10k
-unzip data/mimic-iii-10k.zip -d data/
-```
-
-### 3. Set up the Python backend & train the model
+### 2. Set up the Python backend
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
-.venv/bin/python scripts/build_model.py   # ~30 seconds, creates backend/model.pkl
 ```
 
-### 4. Start the AI Bridge
+### 3. Start the AI Bridge
 ```bash
 .venv/bin/python backend/main.py
 # Runs on http://localhost:8000
 ```
 
-### 5. Install frontend dependencies & start
+### 4. Install frontend dependencies & start
 ```bash
 npm install
 npm run dev
 # Opens on http://localhost:3000
 ```
+
+---
+
+## 🔁 Retraining the Model (Optional)
+
+If you want to retrain on your own MIMIC-III data:
+
+1. Download the MIMIC-III 10k dataset from [Kaggle](https://www.kaggle.com/datasets/bilal1907/mimic-iii-10k)
+2. Extract into `data/`
+3. Run the pipeline:
+```bash
+.venv/bin/python scripts/build_model.py
+```
+This overwrites `backend/model.pkl` with a freshly trained model.
 
 ---
 
@@ -101,7 +107,8 @@ npm run dev
 │       ├── KPICards.tsx
 │       └── Layout.tsx
 ├── backend/
-│   └── main.py               # FastAPI bridge (serves AI predictions)
+│   ├── main.py               # FastAPI bridge (serves AI predictions)
+│   └── model.pkl             # ✅ Pre-trained XGBoost model (1.5 MB)
 ├── scripts/
 │   └── build_model.py        # Full ML pipeline: data → model.pkl
 ├── requirements.txt          # Python dependencies
@@ -115,7 +122,7 @@ npm run dev
 1. **Data Assembly** — Merges `ADMISSIONS` + `LABEVENTS` from MIMIC-III; filters to 5 key lab markers (Glucose, Creatinine, WBC, Hematocrit, Hemoglobin)
 2. **Windowing** — Groups events into 12-hour blocks; creates lag and delta features; calculates "time to discharge" target
 3. **Training** — 80/20 patient-aware split; trains XGBoost regressor; generates SHAP `TreeExplainer`
-4. **Export** — Saves model + test patient predictions + ward summaries + per-ward occupancy timelines into `backend/model.pkl`
+4. **Export** — Saves model + 30 test patient predictions + ward summaries + per-ward occupancy timelines into `backend/model.pkl`
 
 ---
 
