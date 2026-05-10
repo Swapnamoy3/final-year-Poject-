@@ -1,146 +1,91 @@
 # 🏥 LOS Healthcare Dashboard
 
-> An AI-powered, interactive **Length of Stay (LOS) prediction dashboard** built as a final year project. Uses real **MIMIC-III clinical data**, an **XGBoost** machine learning model, and a **Next.js** frontend to give hospital staff deep, explainable insights into patient flow and bed occupancy.
+> An AI-powered, interactive **Length of Stay (LOS) prediction dashboard** built as a final year project. 
+
+This dashboard helps hospital staff predict how long a patient will stay in the hospital (Length of Stay) using an Artificial Intelligence model (XGBoost). It uses real clinical data from the MIMIC-III database.
+
+---
+
+## 🚀 Quick Start (For Beginners)
+
+**Good news:** You do *not* need to download the massive datasets or train the AI model yourself. The pre-trained AI brain (`model.pkl`) is already included in this repository!
+
+### Step 1: Start the Python AI API (Backend)
+This runs the Python server that serves the AI predictions.
+
+1. Open your terminal and clone this repository:
+   ```bash
+   git clone https://github.com/Swapnamoy3/final-year-Poject-.git
+   cd final-year-Poject-
+   ```
+2. Create a Python virtual environment and activate it:
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate  # On Windows use: .venv\Scripts\activate
+   ```
+3. Install the required Python packages:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Start the AI server:
+   ```bash
+   python backend/main.py
+   ```
+   *Leave this terminal window open! The API is now running on `http://localhost:8000`.*
+
+### Step 2: Start the Web Dashboard (Frontend)
+This runs the actual user interface.
+
+1. Open a **new** terminal window and go to the project folder:
+   ```bash
+   cd path/to/final-year-Poject-
+   ```
+2. Install the Node.js dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the dashboard:
+   ```bash
+   npm run dev
+   ```
+4. 🎉 **Open your browser and go to [http://localhost:3000](http://localhost:3000)**
 
 ---
 
 ## ✨ Features
 
-| Feature | Description |
-|---|---|
-| 🔬 **AI-Powered Predictions** | XGBoost model trained on 10,000 MIMIC-III patients predicts LOS in days |
-| 📊 **Confidence Intervals** | Upper and lower bounds shown for every prediction |
-| 🧠 **SHAP Explainability** | Live SHAP values show which lab results are driving each prediction |
-| 🛏️ **Bed Occupancy Timelines** | Per-ward actual → predicted occupancy charts (today + 2 days ahead) |
-| 🔀 **Patient Flow Algorithm** | Care pathway routing: ICU → Surgery → General Medicine → Discharge |
-| 🔎 **Patient View** | Sortable, expandable patient list with risk levels and probability curves |
-| 🏥 **Ward View** | Department-level occupancy, bottlenecks, and patient flow predictions |
-| 🎛️ **What-If Simulator** | Interactive sliders send real-time queries to the AI bridge |
-| 📅 **Temporal Analytics** | Actual vs predicted LOS trends, error curves, and seasonal patterns |
-| 📤 **Admin Panel** | Mock export and compliance reporting interface |
+- 🔬 **AI-Powered Predictions**: Predicts Length of Stay in days using a trained XGBoost ML model.
+- 🧠 **Explainability (SHAP)**: Shows *why* the AI made a prediction by highlighting the exact lab results (e.g. Glucose, WBC) that influenced it.
+- 🛏️ **Bed Occupancy Trends**: Predicts future hospital bed occupancy and patient flow.
+- 🔀 **Patient Flow**: Automatically predicts where a patient will be transferred next (e.g. ICU → Surgery).
+- 🔎 **Real Data Testing**: The dashboard displays 30 real patients taken exclusively from the **20% held-out test set** of the MIMIC-III data, ensuring the predictions you see evaluate real unseen data.
 
 ---
 
-## 🏗️ Architecture
+## 🔁 Want to Re-Train the AI? (Advanced)
 
-```
-┌─────────────────────────┐       ┌──────────────────────────┐
-│   Next.js Frontend      │◄─────►│  FastAPI Python Bridge   │
-│   (localhost:3000)      │  HTTP │  (localhost:8000)        │
-│                         │       │                          │
-│  • PatientView          │       │  • /api/predict (SHAP)   │
-│  • WardView             │       │  • /api/patients         │
-│  • Explainability       │       │  • /api/wards            │
-│  • Temporal Analytics   │       │  • XGBoost model.pkl     │
-└─────────────────────────┘       └──────────────────────────┘
-```
-
----
-
-## 🚀 Getting Started
-
-The **pre-trained model** (`backend/model.pkl`) is already included in this repository — no dataset download needed to run the dashboard!
-
-### Prerequisites
-- Node.js 18+
-- Python 3.10+
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/Swapnamoy3/final-year-Poject-.git
-cd final-year-Poject-
-```
-
-### 2. Set up the Python backend
-```bash
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-```
-
-### 3. Start the AI Bridge
-```bash
-.venv/bin/python backend/main.py
-# Runs on http://localhost:8000
-```
-
-### 4. Install frontend dependencies & start
-```bash
-npm install
-npm run dev
-# Opens on http://localhost:3000
-```
-
----
-
-## 🔁 Retraining the Model (Optional)
-
-If you want to retrain on your own MIMIC-III data:
+If you want to train the model from scratch on your own machine:
 
 1. Download the MIMIC-III 10k dataset from [Kaggle](https://www.kaggle.com/datasets/bilal1907/mimic-iii-10k)
-2. Extract into `data/`
-3. Run the pipeline:
-```bash
-.venv/bin/python scripts/build_model.py
-```
-This overwrites `backend/model.pkl` with a freshly trained model.
-
----
-
-## 📁 Project Structure
-
-```
-├── src/
-│   ├── app/                  # Next.js App Router pages
-│   │   ├── patients/         # Patient View page
-│   │   ├── wards/            # Ward View page
-│   │   ├── temporal/         # Temporal Analytics page
-│   │   ├── explainability/   # AI Sandbox page
-│   │   ├── alerts/           # Decision Support page
-│   │   └── admin/            # Admin Panel page
-│   └── components/           # Re-usable React components
-│       ├── PatientView.tsx
-│       ├── WardView.tsx
-│       ├── TemporalAnalytics.tsx
-│       ├── ExplainabilityPanel.tsx
-│       ├── AlertsPanel.tsx
-│       ├── AdminPanel.tsx
-│       ├── KPICards.tsx
-│       └── Layout.tsx
-├── backend/
-│   ├── main.py               # FastAPI bridge (serves AI predictions)
-│   └── model.pkl             # ✅ Pre-trained XGBoost model (1.5 MB)
-├── scripts/
-│   └── build_model.py        # Full ML pipeline: data → model.pkl
-├── requirements.txt          # Python dependencies
-└── package.json              # Node.js dependencies
-```
-
----
-
-## 🤖 ML Pipeline Overview
-
-1. **Data Assembly** — Merges `ADMISSIONS` + `LABEVENTS` from MIMIC-III; filters to 5 key lab markers (Glucose, Creatinine, WBC, Hematocrit, Hemoglobin)
-2. **Windowing** — Groups events into 12-hour blocks; creates lag and delta features; calculates "time to discharge" target
-3. **Training** — 80/20 patient-aware split; trains XGBoost regressor; generates SHAP `TreeExplainer`
-4. **Export** — Saves model + 30 test patient predictions + ward summaries + per-ward occupancy timelines into `backend/model.pkl`
+2. Extract the CSV files into a folder named `data/` inside this project.
+3. Run the training script:
+   ```bash
+   source .venv/bin/activate
+   python scripts/build_model.py
+   ```
+This will process the data, train a new model, evaluate it on a 20% test split, and overwrite `backend/model.pkl` with your freshly trained model and test patients.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js 16, TypeScript, Vanilla CSS |
-| Charts | Recharts |
-| Icons | Lucide React |
-| ML Model | XGBoost |
-| Explainability | SHAP |
-| Data Processing | Pandas, NumPy |
-| API Bridge | FastAPI, Uvicorn |
-| Dataset | MIMIC-III (10k patients) |
+- **Frontend**: Next.js (React), Vanilla CSS, Recharts
+- **Backend / API**: FastAPI (Python), Uvicorn
+- **Machine Learning**: XGBoost, SHAP, Pandas, Scikit-Learn
+- **Dataset**: MIMIC-III (10,000 patients)
 
 ---
 
-## 📄 License
+## 📄 License & Data
 
-For academic / educational use only. MIMIC-III data requires a [PhysioNet credentialed account](https://physionet.org/content/mimiciii/).
+For academic / educational use only. Usage of raw MIMIC-III data requires a [PhysioNet credentialed account](https://physionet.org/content/mimiciii/).
