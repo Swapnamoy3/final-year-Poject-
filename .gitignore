@@ -48,6 +48,5 @@ __pycache__/
 # Large MIMIC-III dataset (do not commit 100MB+ CSVs)
 data/
 
-# Trained model binary (regenerate with: python scripts/build_model.py)
-backend/model.pkl
+# Local SQLite DB
 lso.db
